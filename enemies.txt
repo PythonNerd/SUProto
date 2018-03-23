@@ -1,1 +1,4 @@
-"Gremlin" 100.00 25.00
+"Citrine" 100.00 25.00
+"Carnelian" 75.00 15.00
+"Amethyst" 150.00 20.00
+"Jasper" 250.00 30.00
