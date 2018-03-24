@@ -17,6 +17,9 @@ Add a story / campaign mode.
 '''
 from enemy import *
 from item import *
+from character import *
+from location import *
+
 import numpy as np
 
 ##INITS
@@ -37,18 +40,27 @@ def loadItems():
     return [[Armor(x[0], x[1], x[2]) for x in armor], [Weapon(y[0], y[1], y[2], y[3]) for y in weapon]]
 
 def loadCharacters():
-    pass
+    lines = load("characters.txt")
+    return [Character(x[0], x[1], x[2]) for x in lines]
     
 def loadLocations():
-    pass
-    
+    lines = load("locations.txt")
+    return [Location(x[0], x[1], x[2]) for x in lines]
+
 def loadPerks():
-    pass
-    
-    
+    lines = load("perks.txt")
+    return [Perks(x[0]. x[1]) for x in lines]
     
 enemies = loadEnemies()
 items = loadItems()
+characters = loadCharacters()
+locations = loadLocations()
+perks = loadPerks()
+
+stats = ["Strength", "Speed", "Durability", "Intelligence"]
+statsLevels = [0,0,0,0]
+player = ""
+
 ##ENGINE
 '''
 RNG
@@ -63,6 +75,13 @@ def search():
     #leveled weapons to give enemies, etc.
     pass
     
+'''
+Prints out the stats for the character.
+'''
+def printStats(name):
+    print("Stats for {}:".format(name))
+    for i, value in enumerate(stats):
+        print(value + ":     " + str(statsLevels[i]))
     
 ##GAME
 '''
@@ -75,7 +94,18 @@ Quit - Save and quit.
 def menu():
     print("Welcome to Game!")
     print("[0]New Game\n[1]Load Character\n[2]View Achievements\n[3]Quit")
-    choice = input("Please pick an option!\n")
+    choice = int(input("Please pick an option!\n"))
+    while choice not in [0, 1, 2, 3]:
+        print("[0]New Game\n[1]Load Character\n[2]View Achievements\n[3]Quit")
+        choice = int(input("Please pick an option from the above!\n"))
+    if choice == 0:
+        newGame()
+    elif choice == 1:
+        loadGame()
+    elif choice == 2:
+        viewAchievements()
+    else:
+        quitGame()
 
 '''
 Ask user to create a name for their character. If name is already in
@@ -87,8 +117,41 @@ and asks you to confirm it. When you say yes the character object is backed
 up to characters.txt
 '''
 def newGame():
-    pass
-   
+    while True:
+        name = input("Enter a name for your new character:\n")
+        while True:
+            for i in range(len(characters)):
+                if characters[i][0] == name:
+                    print("That name is alrady taken! Please try another!")
+                    name = input("Enter a name for your new character:\n")
+                    break
+            break
+        print("Why hello there {}!".format(name))
+        print("Please choose one of the follow skills to put points into.")
+        points = 3
+        while points > 0:
+            print("Points to spend: {}".format(points))
+            printStats(name)
+            addedPoint = input("Enter the name of the skill you want to upgrade:\n")
+            while addedPoint not in stats:
+                addedPoint = input("Please enter the skill you want to upgrade:\n")
+            for i in range(len(stats)):
+                if stats[i] == addedPoint:
+                    statsLevels[i] += 1
+                    points -= 1
+        printStats(name)
+        confirm = input("Please confirm your info! (Y/N)")
+        while confirm.lower() not in "yn":
+            printStats(name)
+            confirm = input("Please confirm your info! (Y/N)")
+        if confirm.lower() == "y":
+            player = name
+            characters.append(Character(name, statsLevels, []))
+            save()
+            break
+    hub()
+        
+
 ''''
 Displays a list of saved characters. If none exist it prompts you to create one.
 Once your character is loaded you move to the hub where you can:
@@ -96,10 +159,15 @@ Once your character is loaded you move to the hub where you can:
 - change out euipment
 - shop
 - visit the library (lore is stored here)
-''''
+'''
 def loadGame():
     pass
    
+'''
+Defined achievements the user can earn. Some might come with rewards.
+'''
+def viewAchievements():
+    pass
 '''
 Described above. This is where you will go after adventures. 
 Each call to hub backs up character data too.
@@ -117,16 +185,14 @@ Going to the library will let you browse books that have pages you read.
 Library will be stored in another file for now.
 '''
 def hub():
-    pass
+    print("Welcome to the hub, {}!".format(player))
     
     
 '''
 Menu takes user input and then goes from there. 
 '''
 def start():
-    #Bring up menu and take user input.
     menu()
-    #Use user input to open that next choice.
 
 
 
@@ -136,6 +202,16 @@ Take current inventory of character, experience, light, levels, etc
 and save it to the character file under their name.
 '''
 def save():
+    with open("characters.txt", "w") as f: 
+        for i in characters:
+            f.write(str(i.name))
+            f.write(" ")
+            f.write(str(i.stats))
+            f.write(" ")
+            f.write(str(i.inventory))
+            f.write("\n")
+    
+def quitGame():
     pass
 
 ##ONSTART
