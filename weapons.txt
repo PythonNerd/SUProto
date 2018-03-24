@@ -1,1 +1,1 @@
-"Sword" "Common" 1 15 
+Sword Common 1 15 

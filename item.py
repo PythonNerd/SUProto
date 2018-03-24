@@ -16,10 +16,14 @@ class Item:
     
 class Armor(Item):
     def __init__(self, name, rarity, health):
+        self.name = name
+        self.rarity = rarity
         self.health = health
     
 class Weapon(Item):
     def __init__(self, name, rarity, level, damage):
+        self.name = name
+        self.rarity = rarity
         self.level = level
         self.damage = damage
     

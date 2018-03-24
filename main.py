@@ -21,20 +21,27 @@ from character import *
 from location import *
 
 import numpy as np
+ 
+#TODO CREATE GAME CLASS TO HOLD CURRENT INFORMATION
+#TODO FINISH HUB
+#TODO CREATE LOCATION/ MAP FUNCTION
+#TODO CREATE EQUIPMENT CHANGING
+#TODO ADD LEVELS, XP, GOLD
+
 
 ##INITS
 #Library file for data of characters and enemy classes.
 def load(file):
     with open(file) as file:
-        return [line.strip() for line in file]
+        return [line.split() for line in file]
         
 def loadEnemies():
     lines = load("enemies.txt")
     return [Enemy(x[0], x[1], x[2], np.random.rand(1)) for x in lines]
 
+#Returns a list [[Armors],[Weapons]]
+#Access armors by items[0] and weapons through items[1]. 
 def loadItems():
-    #Returns a list [[Armors],[Weapons]]
-    #Access armors by items[0] and weapons through items[1]. 
     weapon = load("weapons.txt")
     armor = load("armors.txt")
     return [[Armor(x[0], x[1], x[2]) for x in armor], [Weapon(y[0], y[1], y[2], y[3]) for y in weapon]]
@@ -60,6 +67,8 @@ perks = loadPerks()
 stats = ["Strength", "Speed", "Durability", "Intelligence"]
 statsLevels = [0,0,0,0]
 player = ""
+#Inventory will be ids of the items to keep it short.
+inventory = []
 
 ##ENGINE
 '''
@@ -161,13 +170,29 @@ Once your character is loaded you move to the hub where you can:
 - visit the library (lore is stored here)
 '''
 def loadGame():
-    pass
+    global player
+    global statsLevels
+    print("Here are your saved characters:")
+    for i, value in enumerate(characters):
+        print("[" + str(i) + "] " + value.name)
+    choice = int(input("Please select the character you wish to load:\n"))
+    while choice not in range(len(characters)):
+        choice = int(input("Please select the character you wish to load:\n"))
+    player = str(characters[choice].name)
+    tmp = []
+    for i in characters[choice].stats:
+        if i not in ",":
+            tmp.append(int(i))
+    statsLevels = tmp
+    #Add in inventory loading later. 
+    hub()
    
 '''
 Defined achievements the user can earn. Some might come with rewards.
 '''
 def viewAchievements():
-    pass
+    print("Achievements are coming soon! :)")
+    menu()
 '''
 Described above. This is where you will go after adventures. 
 Each call to hub backs up character data too.
@@ -186,15 +211,36 @@ Library will be stored in another file for now.
 '''
 def hub():
     print("Welcome to the hub, {}!".format(player))
-    
+    print("[0] Go on an adventure\n[1] Equipment\n[2] Shop\n[3] Library")
+    choice = int(input("What would you like to do?\n"))
+    while choice not in [0, 1, 2, 3]:
+        print("[0] Go on an adventure\n[1] Equipment\n [2] Shop\n [3] Library")
+        choice = int(input("Please pick an option from the above!\n"))
+    if choice == 0:
+        pass
+        #Open Adventure Map
+        #Has a back button on it to hub. 
+    elif choice == 1:
+        pass
+        #Open inventory to list Armor/Weapons
+        #When you go into either category you can see name and stats.
+        #If you choose to equip an item it will show how your stats change.
+        #All the choices have a back option.
+    elif choice == 2:
+        pass
+        #Takes you to the shop.
+        #Items are unlocked through leveling, achievements, and other stuff.
+        #To buy an item you need gems which are earned from adventures.
+    else:
+        pass
+        #The library menu will show all the books you currently own. 
+        #A book interface will let you flip the page left, right, or go back.
     
 '''
 Menu takes user input and then goes from there. 
 '''
 def start():
     menu()
-
-
 
 ##SAVE 
 '''
@@ -204,11 +250,7 @@ and save it to the character file under their name.
 def save():
     with open("characters.txt", "w") as f: 
         for i in characters:
-            f.write(str(i.name))
-            f.write(" ")
-            f.write(str(i.stats))
-            f.write(" ")
-            f.write(str(i.inventory))
+            f.write("\"" + str(i.name) + "\"" + " " + i.stats + " " + i.inventory)
             f.write("\n")
     
 def quitGame():

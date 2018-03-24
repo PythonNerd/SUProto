@@ -1,1 +1,1 @@
-"Helmet" "Common" 10 
+Helmet Common 10 
