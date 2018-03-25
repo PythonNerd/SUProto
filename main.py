@@ -68,7 +68,10 @@ characters = loadCharacters()
 locations = loadLocations()
 perks = loadPerks()
 
-statsLevels = [0,0,0,0]
+#Creates a gameState with a blank character class.
+#Primary use is for providing us with a template when starting a new game.
+#If we load in a game, it's overwritten anyways.
+#If we find an alternative to this I am all for it.
 gamestate = gameState()
 
 ##ENGINE
@@ -85,13 +88,6 @@ def search():
     #leveled weapons to give enemies, etc.
     pass
     
-'''
-Prints out the stats for the character.
-'''
-def printStats(name):
-    print("Stats for {}:".format(name))
-    for i, value in enumerate(stats):
-        print(value + ":     " + str(statsLevels[i]))
     
 ##GAME
 '''
@@ -154,7 +150,7 @@ def newGame():
             gamestate.displayStats()
             confirm = input("Please confirm your info! (Y/N)")
         if confirm.lower() == "y":
-            tmpCharacter = Character(name, statsLevels, [])
+            tmpCharacter = Character(name, gameState.stats, [])
             characters.append(tmpCharacter)
             global gamestate
             gamestate = gameState(tmpCharacter)
@@ -173,7 +169,6 @@ Once your character is loaded you move to the hub where you can:
 '''
 def loadGame():
     global gamestate
-    global statsLevels
     print("Here are your saved characters:")
     for i, value in enumerate(characters):
         print("[" + str(i) + "] " + value.name)
@@ -181,11 +176,7 @@ def loadGame():
     while choice not in range(len(characters)):
         choice = int(input("Please select the character you wish to load:\n"))
     gamestate = gameState(characters[choice])
-    tmp = []
-    for i in characters[choice].stats:
-        if i not in ",":
-            tmp.append(int(i))
-    statsLevels = tmp
+    #gamestate should have the proper stats levels, name, and invetory.
     #Add in inventory loading later. 
     hub()
    
