@@ -18,15 +18,19 @@ Add a story / campaign mode.
 from enemy import *
 from item import *
 from character import *
+from gameState import *
 from location import *
 
 import numpy as np
  
-#TODO CREATE GAME CLASS TO HOLD CURRENT INFORMATION
-#TODO FINISH HUB
-#TODO CREATE LOCATION/ MAP FUNCTION
-#TODO CREATE EQUIPMENT CHANGING
-#TODO ADD LEVELS, XP, GOLD
+#TODO Edit statsLevles in main.py to reflect gameState.
+#TODO Finish the basic gameState class and functions. 
+
+#TODO FINISH HUB 3/26
+#TODO CREATE LOCATION/ MAP FUNCTION 3/27
+#TODO CREATE EQUIPMENT CHANGING 3/28
+#TODO ADD LEVELS, XP, GOLD 3/29
+#TODO Merge leveling, xp, gold to gameState.
 
 
 ##INITS
@@ -64,11 +68,8 @@ characters = loadCharacters()
 locations = loadLocations()
 perks = loadPerks()
 
-stats = ["Strength", "Speed", "Durability", "Intelligence"]
 statsLevels = [0,0,0,0]
-player = ""
-#Inventory will be ids of the items to keep it short.
-inventory = []
+gamestate = gameState()
 
 ##ENGINE
 '''
@@ -140,22 +141,23 @@ def newGame():
         points = 3
         while points > 0:
             print("Points to spend: {}".format(points))
-            printStats(name)
-            addedPoint = input("Enter the name of the skill you want to upgrade:\n")
-            while addedPoint not in stats:
-                addedPoint = input("Please enter the skill you want to upgrade:\n")
-            for i in range(len(stats)):
-                if stats[i] == addedPoint:
-                    statsLevels[i] += 1
-                    points -= 1
-        printStats(name)
+            gamestate.displayStats()
+            addedPoint = int(input("Enter the number of the skill you want to upgrade:\n"))
+            while addedPoint not in [range(len(gamestate.stats)-1)]:
+                addedPoint = int(input("Please enter the number of the skill you want to upgrade:\n"))
+            gamestate.stats[addedPoint] += 1
+            points -= 1
+
+        gamestate.displayStats()
         confirm = input("Please confirm your info! (Y/N)")
         while confirm.lower() not in "yn":
-            printStats(name)
+            gamestate.displayStats()
             confirm = input("Please confirm your info! (Y/N)")
         if confirm.lower() == "y":
-            player = name
-            characters.append(Character(name, statsLevels, []))
+            tmpCharacter = Character(name, statsLevels, [])
+            characters.append(tmpCharacter)
+            global gamestate
+            gamestate = gameState(tmpCharacter)
             save()
             break
     hub()
@@ -170,7 +172,7 @@ Once your character is loaded you move to the hub where you can:
 - visit the library (lore is stored here)
 '''
 def loadGame():
-    global player
+    global gamestate
     global statsLevels
     print("Here are your saved characters:")
     for i, value in enumerate(characters):
@@ -178,7 +180,7 @@ def loadGame():
     choice = int(input("Please select the character you wish to load:\n"))
     while choice not in range(len(characters)):
         choice = int(input("Please select the character you wish to load:\n"))
-    player = str(characters[choice].name)
+    gamestate = gameState(characters[choice])
     tmp = []
     for i in characters[choice].stats:
         if i not in ",":
@@ -210,7 +212,7 @@ Going to the library will let you browse books that have pages you read.
 Library will be stored in another file for now.
 '''
 def hub():
-    print("Welcome to the hub, {}!".format(player))
+    print("Welcome to the hub, {}!".format(gamestate.name))
     print("[0] Go on an adventure\n[1] Equipment\n[2] Shop\n[3] Library")
     choice = int(input("What would you like to do?\n"))
     while choice not in [0, 1, 2, 3]:
@@ -243,6 +245,7 @@ def start():
     menu()
 
 ##SAVE 
+#TODO Edit save to take data from gameState instead
 '''
 Take current inventory of character, experience, light, levels, etc
 and save it to the character file under their name.
