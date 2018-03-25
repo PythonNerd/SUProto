@@ -72,7 +72,8 @@ perks = loadPerks()
 #Primary use is for providing us with a template when starting a new game.
 #If we load in a game, it's overwritten anyways.
 #If we find an alternative to this I am all for it.
-gamestate = gameState()
+default = Character("Default","0,0,0,0",[])
+gamestate = Gamestate(default)
 
 ##ENGINE
 '''
@@ -123,6 +124,7 @@ and asks you to confirm it. When you say yes the character object is backed
 up to characters.txt
 '''
 def newGame():
+    global gamestate
     while True:
         name = input("Enter a name for your new character:\n")
         while True:
@@ -152,7 +154,7 @@ def newGame():
         if confirm.lower() == "y":
             tmpCharacter = Character(name, gameState.stats, [])
             characters.append(tmpCharacter)
-            global gamestate
+
             gamestate = gameState(tmpCharacter)
             save()
             break
@@ -175,7 +177,7 @@ def loadGame():
     choice = int(input("Please select the character you wish to load:\n"))
     while choice not in range(len(characters)):
         choice = int(input("Please select the character you wish to load:\n"))
-    gamestate = gameState(characters[choice])
+    gamestate = Gamestate(characters[choice])
     #gamestate should have the proper stats levels, name, and invetory.
     #Add in inventory loading later. 
     hub()
@@ -203,7 +205,7 @@ Going to the library will let you browse books that have pages you read.
 Library will be stored in another file for now.
 '''
 def hub():
-    print("Welcome to the hub, {}!".format(gamestate.name))
+    print("Welcome to the hub, {}!".format(gamestate.player))
     print("[0] Go on an adventure\n[1] Equipment\n[2] Shop\n[3] Library")
     choice = int(input("What would you like to do?\n"))
     while choice not in [0, 1, 2, 3]:
