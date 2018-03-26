@@ -6,7 +6,6 @@ Rng will determine if they drop any assortment of items from
 the items file.
 
 Add methods
-Have to add how level will affect other stats of enemy
 '''
 class Enemy:
     def __init__(self, name, health, damage, rng, evasion, accuracy, level):
