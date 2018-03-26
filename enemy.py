@@ -8,12 +8,30 @@ the items file.
 Add methods
 '''
 class Enemy:
-    def __init__(self, name, health, damage, rng):
+    def __init__(self, name, health, damage, rng, evasion, accuracy, level):
         self.name = name
         self.health = health
-        self.damaeg = damage
+        self.damage = damage
         self.rng = rng
+        self.evasion = evasion
+        self.accuracy = accuracy
+        self.level = level
     
-    def attack(self):
-        print("it works!")
+    def attack(self, hero_evasion, hero_health):
+        if self.accuracy >= hero_evasion:
+            hero_health -= self.damage
+            print(self.name + " has dealt " + self.damage + "!")
+        else:
+            print("The hero has dodged it!")
+        return hero_health
+
+    def dodge(self, hero_accuracy, dmg_dealt_by_hero):
+        if self.evasion >= hero_accuracy:
+            print(self.name+" dodged it!")
+        else:
+            self.health -= dmg_dealt_by_hero
+            print(dmg_dealt_by_hero+" damage has been inflicted!")
+        return self.health
+
+
         
