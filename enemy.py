@@ -7,6 +7,10 @@ the items file.
 
 Add methods
 '''
+import numpy as np
+from numpy.matlib import rand
+
+
 class Enemy:
     def __init__(self, name, health, damage, rng, evasion, accuracy, level):
         self.name = name
@@ -26,12 +30,13 @@ class Enemy:
         return hero_health
 
     def dodge(self, hero_accuracy, dmg_dealt_by_hero):
-        if self.evasion >= hero_accuracy:
+
+        #Work more on the dodgeRate!
+        dodgeRate = (self.evasion * np.random.randint(1, 6)) / hero_accuracy
+        if np.random(rand(1)) > (1 - dodgeRate):
             print(self.name+" dodged it!")
         else:
             self.health -= dmg_dealt_by_hero
-            print(dmg_dealt_by_hero+" damage has been inflicted!")
+            print(dmg_dealt_by_hero + " damage has been inflicted!")
         return self.health
 
-
-        
