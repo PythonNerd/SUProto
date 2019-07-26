@@ -21,12 +21,8 @@ class Gamestate:
 
     def displayStats(self):
         stats = ["Strength", "Speed", "Durability", "Intelligence"]
-        statsLevels = [0,0,0,0]
-        print("Stats for {}:".format(self.name))
-        for i, value in enumerate(stats):
-            print("[{}] {}: {}".format(i, value, statsLevels[i]))
+        print("Stats for {}:".format(self.player))
+        for i, value in enumerate(self.playerStats):
+            print("[{}] {}: {}".format(i, stats[i], self.playerStats[i]))
 
 #hello = gameState()
-
-    
-        
