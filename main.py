@@ -23,8 +23,8 @@ from location import *
 
 import numpy as np
  
-#TODO Edit statsLevles in main.py to reflect gameState.
 #TODO Finish the basic gameState class and functions. 
+#TODO ADD ASSERTIONS
 
 #TODO FINISH HUB 3/26
 #TODO CREATE LOCATION/ MAP FUNCTION 3/27
@@ -56,7 +56,7 @@ def loadCharacters():
     
 def loadLocations():
     lines = load("locations.txt")
-    return [Location(x[0], x[1], x[2]) for x in lines]
+    return [Location(x[0], x[1], np.random.rand(1)) for x in lines]
 
 def loadPerks():
     lines = load("perks.txt")
@@ -78,18 +78,72 @@ gamestate = Gamestate(default)
 ##ENGINE
 '''
 RNG
-
 For RNG we will check if value > .50 for commons, then > .49 for legendaries, 
 > .30 for rares, and > .05 for uncommons.
 
 Items will have their own list.
 '''
+def rngDrop(value):    
+    #Once we determine rarity we will grab a random item of that rarity
+    #and drop it.
+    rarity = ""
+    randomValue = np.random.rand(1) #Random number between 0 and 1.
+    if randomValue > .50:
+        #Drop common.
+        rarity = "Common"
+    elif randomValue > .49:
+        rarity = "Legendary"
+    elif randomValue > .30:
+        rarity = "Rare"
+    elif randomValue > .05:
+        rarity = "Uncommon"
+    else:
+        rarity = "Epic"
+    return rarity
+
 def search():
     #Go over a list to search for something. Such as rare weapons to drop,
     #leveled weapons to give enemies, etc.
+    
+    #Make several diffent search functions?
     pass
     
+def adventureMap():
+    print("Welcome to the adventure map! Type 'back' to return to the hub or choose a location.")
+    for i, value in enumerate(locations):
+        print("[{}] {: <10}| Level requirement: {}".format(i, value.name, value.level))
+    choice = (input("Please pick an option!\n"))
+    if choice.lower() == "back":
+        hub()
+    while int(choice) not in [range(len(locations)-1)]:
+        choice = (input("Please pick an option!\n"))
+    #Check for player level here. 
+    #loadLocation(locations[choice])
     
+
+'''
+loadLocation will take the chosen location and build a dungeon off of it. 
+It will create a number of leveled enemies based on input range. A location with
+10 enemies will have anywhere from 1 - 10.
+
+Then it will create segments. Such as --> Battle --> Treasure --> Battle based 
+on the rng calculator. 
+
+It will then use the rng calculator to determine what segments to drop loot in
+and the rarity of that loot. You can also find books while adventuring. 
+
+Once the location is created we will go to the battle system, where
+the player chooses to fight, heal, run, change items, etc. 
+
+The battle system will use gamestate to pull info for fighting. 
+Active enemies will be pushed to gamestate queue which pop off enemies
+to fight in order.
+'''
+def loadLocation(location):
+    pass
+    
+def battleSystem():
+    pass
 ##GAME
 '''
 Menu
@@ -129,7 +183,7 @@ def newGame():
         name = input("Enter a name for your new character:\n")
         while True:
             for i in range(len(characters)):
-                if characters[i][0] == name:
+                if characters[i].name == name:
                     print("That name is alrady taken! Please try another!")
                     name = input("Enter a name for your new character:\n")
                     break
@@ -141,9 +195,12 @@ def newGame():
             print("Points to spend: {}".format(points))
             gamestate.displayStats()
             addedPoint = int(input("Enter the number of the skill you want to upgrade:\n"))
-            while addedPoint not in [range(len(gamestate.stats)-1)]:
+            while addedPoint not in [range(len(gamestate.playerStats)-1)]:
+                print(range(len(gamestate.playerStats)-1))
+                print(gamestate.playerStats)
+                print(addedPoint)
                 addedPoint = int(input("Please enter the number of the skill you want to upgrade:\n"))
-            gamestate.stats[addedPoint] += 1
+            gamestate.playerStats[addedPoint] += 1
             points -= 1
 
         gamestate.displayStats()
@@ -212,7 +269,7 @@ def hub():
         print("[0] Go on an adventure\n[1] Equipment\n [2] Shop\n [3] Library")
         choice = int(input("Please pick an option from the above!\n"))
     if choice == 0:
-        pass
+        adventureMap()
         #Open Adventure Map
         #Has a back button on it to hub. 
     elif choice == 1:
@@ -245,6 +302,12 @@ and save it to the character file under their name.
 '''
 def save():
     with open("characters.txt", "w") as f: 
+        for i in characters:
+            if i.name == gamestate.player:
+            #Update our character's data. Will be adding levels later.
+                characters[i].append(Character(gamestate.player, gamestate.playerStats, gamestate.playerInventory))
+        #Or we could go through the lines of character.txt and only edit the line
+        #that they exist in? Hmm
         for i in characters:
             f.write("\"" + str(i.name) + "\"" + " " + i.stats + " " + i.inventory)
             f.write("\n")
