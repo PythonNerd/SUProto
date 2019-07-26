@@ -1,5 +1,4 @@
 # SUProto
-![SU](https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Steven_Universe_logo.svg/1200px-Steven_Universe_logo.svg.png "SU")
 
 Welcome to SUProto! Or Sup! 
 
