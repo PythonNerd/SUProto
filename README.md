@@ -1,7 +1,3 @@
 # SUProto
 
-Welcome to SUProto! Or Sup! 
-
-We are a fan made project to create a Steven Universe RPG. Right now we are working on setting up the framework of the game in Python and text before moving to 3D. Feedback is the biggest driving factor behind this project, so please let us know what you want to add.
-
-I will be updating this readme soon to reflect contributors, project managers, and other important information about the project. 
+This was a project started a while back to create a text-based RPG set in the Steven Universe...universe. I would like to resume it at some point. There is quite a lot of improvements I can make to the design so I am considering a full overhaul.
